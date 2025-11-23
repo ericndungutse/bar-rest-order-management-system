@@ -21,7 +21,10 @@ console.log('\n📋 Item Model Schema:');
 console.log('   ✅ Model name:', Item.modelName);
 console.log('   ✅ Schema paths:', Object.keys(Item.schema.paths).join(', '));
 console.log('   ✅ Has timestamps:', Item.schema.options.timestamps);
-console.log('   ✅ Indexes:', Item.schema.indexes().map(idx => Object.keys(idx[0])[0] || 'compound').join(', '));
+console.log('   ✅ Indexes:', Item.schema.indexes().map(idx => {
+  const keys = Object.keys(idx[0]);
+  return keys.length > 1 ? `{${keys.join(', ')}}` : keys[0];
+}).join(', '));
 
 // Verify Item schema fields
 const itemPaths = Object.keys(Item.schema.paths);
@@ -38,7 +41,10 @@ console.log('\n📋 Order Model Schema:');
 console.log('   ✅ Model name:', Order.modelName);
 console.log('   ✅ Schema paths:', Object.keys(Order.schema.paths).join(', '));
 console.log('   ✅ Has timestamps:', Order.schema.options.timestamps);
-console.log('   ✅ Indexes:', Order.schema.indexes().map(idx => Object.keys(idx[0])[0] || 'compound').join(', '));
+console.log('   ✅ Indexes:', Order.schema.indexes().map(idx => {
+  const keys = Object.keys(idx[0]);
+  return keys.length > 1 ? `{${keys.join(', ')}}` : keys[0];
+}).join(', '));
 
 // Verify Order schema fields
 const orderPaths = Object.keys(Order.schema.paths);

@@ -69,6 +69,7 @@ async function testModels() {
           name: 'Cola',
           price: 2.50,
           quantity: 1,
+          // ownerId is optional - tests scenario where item doesn't have specific owner
         },
       ],
       waiterId: new mongoose.Types.ObjectId(),
