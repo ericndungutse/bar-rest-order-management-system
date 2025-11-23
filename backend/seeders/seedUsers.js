@@ -40,8 +40,11 @@ const seedUsers = async () => {
     await User.deleteMany();
     console.log('Cleared existing users');
 
-    // Insert seed users
-    await User.insertMany(users);
+    // Insert seed users one by one to trigger pre-save middleware
+    for (const userData of users) {
+      const user = new User(userData);
+      await user.save();
+    }
     console.log('Users seeded successfully');
 
     console.log('\nSeeded users:');
