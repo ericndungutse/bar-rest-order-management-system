@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import connectDB from './config/db.js';
 
 dotenv.config();
@@ -24,6 +25,23 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     status: 'running'
   });
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  const health = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: {
+      status: dbStatus,
+      name: mongoose.connection.name || 'not connected'
+    }
+  };
+  
+  const statusCode = dbStatus === 'connected' ? 200 : 503;
+  res.status(statusCode).json(health);
 });
 
 // API routes will be added here

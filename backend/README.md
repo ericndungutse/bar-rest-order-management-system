@@ -47,6 +47,7 @@ The server will start on `http://localhost:5000` (or the port specified in your 
 
 ### Base URL
 - `GET /` - Welcome message and API status
+- `GET /health` - Health check endpoint (shows server and database status)
 
 ### Future Endpoints
 - `/api/orders` - Order management endpoints
