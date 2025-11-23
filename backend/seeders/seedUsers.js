@@ -44,7 +44,7 @@ const seedUsers = async () => {
     }
     console.log('Users seeded successfully');
 
-    console.log('\nSeeded users:');
+    console.log('\nSeeded users (Development only - Do not use in production):');
     users.forEach((user) => {
       console.log(`- ${user.roles.join(', ')}: ${user.name} (${user.email}) - Password: Test@123`);
     });
