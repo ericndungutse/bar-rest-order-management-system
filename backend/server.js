@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import connectDB from './config/db.js';
+import authRoutes from './routes/auth.routes.js';
 
 dotenv.config();
 
@@ -44,7 +45,8 @@ app.get('/health', (req, res) => {
   res.status(statusCode).json(health);
 });
 
-// API routes will be added here
+// API routes
+app.use('/api/v1/auth', authRoutes);
 // app.use('/api/orders', orderRoutes);
 // app.use('/api/menu', menuRoutes);
 // app.use('/api/tables', tableRoutes);

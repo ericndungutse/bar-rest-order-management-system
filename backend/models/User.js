@@ -1,10 +1,17 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    username: {
       type: String,
-      required: [true, 'Name is required'],
+      required: [true, 'Username is required'],
+      unique: true,
+      trim: true,
+    },
+    fullname: {
+      type: String,
+      required: [true, 'Full name is required'],
       trim: true,
     },
     email: {
@@ -20,16 +27,11 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters long'],
     },
-    roles: {
-      type: [String],
-      enum: ['admin', 'manager', 'waiter'],
-      default: ['waiter'],
-      validate: {
-        validator: function(roles) {
-          return roles && roles.length > 0;
-        },
-        message: 'At least one role is required',
-      },
+    role: {
+      type: String,
+      enum: ['admin', 'manager', 'staff'],
+      default: 'staff',
+      required: [true, 'Role is required'],
     },
     phone: {
       type: String,
@@ -42,7 +44,27 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index for role-based queries
-userSchema.index({ roles: 1 });
+userSchema.index({ role: 1 });
+
+// Hash password before saving
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Method to compare passwords
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 
