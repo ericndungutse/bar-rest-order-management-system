@@ -28,13 +28,13 @@ console.log('   ✅ Indexes:', Item.schema.indexes().map(idx => {
 
 // Verify Item schema fields
 const itemPaths = Object.keys(Item.schema.paths);
-const requiredItemFields = ['name', 'description', 'price', 'quantity_available', 'category', 'userId', 'available'];
+const requiredItemFields = ['name', 'description', 'price', 'quantity_available', 'category', 'owner', 'available'];
 const hasAllItemFields = requiredItemFields.every(field => itemPaths.includes(field));
 console.log('   ✅ Has all required fields:', hasAllItemFields);
 
-// Check Item userId reference
-const userIdField = Item.schema.path('userId');
-console.log('   ✅ userId references User:', userIdField.options.ref === 'User');
+// Check Item owner reference
+const ownerField = Item.schema.path('owner');
+console.log('   ✅ owner references User:', ownerField.options.ref === 'User');
 
 // Test Order Model Schema
 console.log('\n📋 Order Model Schema:');
@@ -68,7 +68,7 @@ const hasItemsSchema = itemsSchema.schema !== undefined && itemsSchema.schema.pa
 console.log('   ✅ items is array of embedded documents:', hasItemsSchema);
 
 console.log('\n📊 Schema Relationships:');
-console.log('   ✅ User → Item (userId reference)');
+console.log('   ✅ User → Item (owner reference)');
 console.log('   ✅ User → Order (waiterId reference)');
 console.log('   ✅ User → Order (sellerId reference)');
 console.log('   ✅ Item → Order.items (itemId reference)');
@@ -113,7 +113,7 @@ try {
     price: 12.99,
     quantity_available: 50,
     category: 'Food',
-    userId: new mongoose.Types.ObjectId(),
+    owner: new mongoose.Types.ObjectId(),
     available: true,
   });
   console.log('   ✅ Item instance created successfully');

@@ -28,10 +28,10 @@ const itemSchema = new mongoose.Schema(
       enum: ['Food', 'Drink', 'Dessert'],
       trim: true,
     },
-    userId: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'User ID (owner/seller) is required'],
+      required: [true, 'Owner is required'],
     },
     available: {
       type: Boolean,
@@ -43,8 +43,8 @@ const itemSchema = new mongoose.Schema(
   }
 );
 
-// Index for faster lookups by userId (owner)
-itemSchema.index({ userId: 1 });
+// Index for faster lookups by owner
+itemSchema.index({ owner: 1 });
 
 // Index for category filtering
 itemSchema.index({ category: 1 });

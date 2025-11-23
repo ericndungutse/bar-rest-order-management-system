@@ -38,7 +38,7 @@ async function testModels() {
       price: 12.99,
       quantity_available: 50,
       category: 'Food',
-      userId: new mongoose.Types.ObjectId(),
+      owner: new mongoose.Types.ObjectId(),
       available: true,
     });
     
@@ -46,7 +46,7 @@ async function testModels() {
     console.log('✅ Item model validation passed');
     console.log('   Fields:', Object.keys(testItem.toObject()));
     console.log('   Has timestamps:', testItem.createdAt !== undefined && testItem.updatedAt !== undefined);
-    console.log('   Has userId reference:', testItem.userId instanceof mongoose.Types.ObjectId);
+    console.log('   Has owner reference:', testItem.owner instanceof mongoose.Types.ObjectId);
 
     // Test Order Model
     console.log('\n📋 Testing Order Model...');
@@ -135,7 +135,7 @@ async function testModels() {
         price: 10,
         quantity_available: 5,
         category: 'InvalidCategory',
-        userId: new mongoose.Types.ObjectId(),
+        owner: new mongoose.Types.ObjectId(),
       });
       await invalidItem.validate();
       console.log('❌ Item category enum validation should have failed');
@@ -160,7 +160,7 @@ async function testModels() {
     
     // Display schema relationships
     console.log('📊 Schema Relationships:');
-    console.log('   User → Item (userId reference)');
+    console.log('   User → Item (owner reference)');
     console.log('   User → Order (waiterId reference)');
     console.log('   User → Order (sellerId reference)');
     console.log('   Item → Order.items (itemId reference)');

@@ -26,7 +26,7 @@ Represents users in the system (admin, manager, waiter).
 - `roles` (for role-based queries)
 
 **Relationships:**
-- `owns → Item (userId)`
+- `owns → Item (owner)`
 - `serves → Order (waiterId)`
 - `receives → Order (sellerId)`
 
@@ -43,19 +43,19 @@ Represents menu items (food, drinks, desserts).
 - `price` (Number) - Item price (required, min 0)
 - `quantity_available` (Number) - Stock quantity (required, min 0, default 0)
 - `category` (String) - Category: `['Food', 'Drink', 'Dessert']` (required)
-- `userId` (ObjectId) - Reference to User (owner/seller) (required)
+- `owner` (ObjectId) - Reference to User (owner/seller) (required)
 - `available` (Boolean) - Item availability (default true)
 - `createdAt` (Date) - Timestamp (auto-generated)
 - `updatedAt` (Date) - Timestamp (auto-generated)
 
 **Indexes:**
-- `userId` (for owner lookups)
+- `owner` (for owner lookups)
 - `category` (for filtering)
 - `available` (for filtering)
 - `{available, category}` (compound index)
 
 **Relationships:**
-- `belongsTo → User (userId)`
+- `belongsTo → User (owner)`
 - `includedIn → Order.items.itemId`
 
 ---
@@ -104,12 +104,12 @@ Represents customer orders.
 
 ```
 User (_id)
- ├─ owns → Item (userId)
+ ├─ owns → Item (owner)
  ├─ serves → Order (waiterId)
  └─ receives → Order (sellerId)
 
 Item (_id)
- ├─ belongsTo → User (userId)
+ ├─ belongsTo → User (owner)
  └─ includedIn → Order.items.itemId
 
 Order (_id)
@@ -155,7 +155,7 @@ const item = new Item({
   price: 12.99,
   quantity_available: 50,
   category: 'Food',
-  userId: userId, // Reference to User
+  owner: ownerId, // Reference to User (owner)
   available: true
 });
 await item.save();
