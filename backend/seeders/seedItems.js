@@ -62,22 +62,34 @@ const seedItems = async () => {
   try {
     await connectDB();
 
+    // Convert ADMIN_USER_ID to ObjectId for proper comparison
+    const adminObjectId = new mongoose.Types.ObjectId(ADMIN_USER_ID);
+
     // Clear existing items for this admin user
-    await Item.deleteMany({ owner: ADMIN_USER_ID });
+    await Item.deleteMany({ owner: adminObjectId });
     console.log('Cleared existing items for admin user');
 
     // Insert seed items
     const createdItems = await Item.insertMany(items);
     console.log('Items seeded successfully');
 
-    console.log('\nSeeded items for admin user (ID: 6923914c954a9bdea72eafea):');
+    console.log(`\nSeeded items for admin user (ID: ${ADMIN_USER_ID}):`);
     console.log('============================================================');
+    
+    // Separate items by type based on their names
+    const softDrinks = createdItems.filter(item => 
+      item.name.includes('Fanta') || item.name.includes('Coca Cola')
+    );
+    const beers = createdItems.filter(item => 
+      item.name.includes('Mutzing') || item.name.includes('Primus') || item.name.includes('Heineken')
+    );
+    
     console.log('\nSoft Drinks:');
-    createdItems.slice(0, 2).forEach((item) => {
+    softDrinks.forEach((item) => {
       console.log(`- ${item.name}: ${item.quantity_available} pieces @ ${item.price} RWF each`);
     });
     console.log('\nBeer:');
-    createdItems.slice(2).forEach((item) => {
+    beers.forEach((item) => {
       console.log(`- ${item.name}: ${item.quantity_available} pieces @ ${item.price} RWF each`);
     });
     console.log('\n============================================================');
