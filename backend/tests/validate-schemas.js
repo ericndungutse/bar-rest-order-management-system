@@ -58,7 +58,8 @@ console.log('   ✅ client is embedded document:', clientSchema.schema !== undef
 
 // Check embedded items array
 const itemsSchema = Order.schema.path('items');
-console.log('   ✅ items is array of embedded documents:', Array.isArray(itemsSchema.schema.paths.itemId ? [1] : []));
+const hasItemsSchema = itemsSchema.schema !== undefined && itemsSchema.schema.paths.itemId !== undefined;
+console.log('   ✅ items is array of embedded documents:', hasItemsSchema);
 
 console.log('\n📊 Schema Relationships:');
 console.log('   ✅ User → Item (userId reference)');
