@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'manager', 'staff'],
+      enum: ['admin', 'manager', 'staff'], // Note: 'staff' is used instead of 'waiter' as per requirements
       default: 'staff',
       required: [true, 'Role is required'],
     },

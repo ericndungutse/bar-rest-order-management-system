@@ -3,9 +3,12 @@ import User from '../models/User.js';
 
 // Generate JWT token
 const generateToken = (userId) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+  }
   return jwt.sign(
     { user_id: userId },
-    process.env.JWT_SECRET || 'default_secret_key',
+    process.env.JWT_SECRET,
     { expiresIn: '1h' }
   );
 };
