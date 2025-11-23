@@ -6,14 +6,17 @@ This directory contains the MongoDB/Mongoose models for the Bar & Restaurant Ord
 
 ### User Model (`User.js`)
 
-Represents users in the system (waiters, admins, sellers).
+Represents users in the system (admin, manager, waiter).
 
 **Attributes:**
 - `_id` (ObjectId) - Primary key (auto-generated)
 - `name` (String) - User's full name (required)
 - `email` (String) - Unique email address (required)
 - `password` (String) - Hashed password (required, min 6 characters)
-- `roles` (Array[String]) - User roles: `['waiter', 'admin', 'seller']` (required)
+- `roles` (Array[String]) - User roles: `['admin', 'manager', 'waiter']` (required)
+  - `admin` - Owner of products
+  - `manager` - Manages restaurant and/or bar
+  - `waiter` - Serves customers
 - `phone` (String) - Phone number (optional)
 - `createdAt` (Date) - Timestamp (auto-generated)
 - `updatedAt` (Date) - Timestamp (auto-generated)

@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     roles: {
       type: [String],
-      enum: ['waiter', 'admin', 'seller'],
+      enum: ['admin', 'manager', 'waiter'],
       default: ['waiter'],
       validate: {
         validator: function(roles) {

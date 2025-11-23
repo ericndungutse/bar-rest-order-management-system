@@ -98,7 +98,7 @@ try {
     name: 'John Doe',
     email: 'john.doe@test.com',
     password: 'hashedpassword123',
-    roles: ['waiter', 'admin'],
+    roles: ['waiter', 'manager'],
     phone: '+1234567890',
   });
   console.log('   ✅ User instance created successfully');
