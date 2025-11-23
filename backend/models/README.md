@@ -75,7 +75,6 @@ Represents customer orders.
   - `name` (String) - Item name snapshot (required)
   - `price` (Number) - Item price snapshot (required, min 0)
   - `quantity` (Number) - Quantity ordered (required, min 1)
-  - `ownerId` (ObjectId) - Reference to User (optional)
 - `waiterId` (ObjectId) - Reference to User serving the order (required)
 - `sellerId` (ObjectId) - Reference to User who owns items (optional)
 - `status` (String) - Order status: `['pending', 'preparing', 'served', 'cancelled']` (default 'pending')

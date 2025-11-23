@@ -47,10 +47,6 @@ const orderItemSchema = new mongoose.Schema(
       required: [true, 'Item quantity is required'],
       min: [1, 'Quantity must be at least 1'],
     },
-    ownerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
   },
   { _id: false }
 );

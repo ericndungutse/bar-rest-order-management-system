@@ -62,14 +62,12 @@ async function testModels() {
           name: 'Burger',
           price: 12.99,
           quantity: 2,
-          ownerId: new mongoose.Types.ObjectId(),
         },
         {
           itemId: new mongoose.Types.ObjectId(),
           name: 'Cola',
           price: 2.50,
           quantity: 1,
-          // ownerId is optional - tests scenario where item doesn't have specific owner
         },
       ],
       waiterId: new mongoose.Types.ObjectId(),
@@ -166,7 +164,6 @@ async function testModels() {
     console.log('   User → Order (waiterId reference)');
     console.log('   User → Order (sellerId reference)');
     console.log('   Item → Order.items (itemId reference)');
-    console.log('   User → Order.items (ownerId reference)');
     
   } catch (error) {
     console.error('❌ Test failed:', error.message);

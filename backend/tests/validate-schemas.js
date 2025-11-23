@@ -72,7 +72,6 @@ console.log('   ✅ User → Item (userId reference)');
 console.log('   ✅ User → Order (waiterId reference)');
 console.log('   ✅ User → Order (sellerId reference)');
 console.log('   ✅ Item → Order.items (itemId reference)');
-console.log('   ✅ User → Order.items (ownerId reference)');
 
 // Test enum validations
 console.log('\n📋 Enum Validations:');
@@ -136,7 +135,6 @@ try {
         name: 'Burger',
         price: 12.99,
         quantity: 2,
-        ownerId: new mongoose.Types.ObjectId(),
       },
     ],
     waiterId: new mongoose.Types.ObjectId(),
