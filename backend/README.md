@@ -41,6 +41,16 @@ npm run dev
 npm start
 ```
 
+### Seed the database with test users:
+```bash
+npm run seed
+```
+
+This will create three test users:
+- **admin** (admin@yopmain.com) - Password: Test@123
+- **manager** (manager@yopmain.com) - Password: Test@123
+- **staff_member** (staff@yopmain.com) - Password: Test@123
+
 The server will start on `http://localhost:5000` (or the port specified in your .env file).
 
 ## API Endpoints
@@ -48,6 +58,34 @@ The server will start on `http://localhost:5000` (or the port specified in your 
 ### Base URL
 - `GET /` - Welcome message and API status
 - `GET /health` - Health check endpoint (shows server and database status)
+
+### Authentication
+- `POST /api/v1/auth/login` - Login with username and password
+
+#### Login Example
+```bash
+curl -X POST http://localhost:5000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "staff_member", "password": "Test@123"}'
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Login Successful",
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "user_id": "716cdea8-f82b-4205-b7f3-d05ad2b88679",
+      "username": "staff_member",
+      "fullname": "Staff Member",
+      "email": "staff@yopmain.com",
+      "role": "staff"
+    }
+  }
+}
+```
 
 ### Future Endpoints
 - `/api/orders` - Order management endpoints
@@ -61,9 +99,15 @@ backend/
 ├── config/          # Configuration files
 │   └── db.js       # MongoDB connection
 ├── controllers/     # Route controllers
+│   └── authController.js  # Authentication controller
 ├── middleware/      # Custom middleware
 ├── models/         # Mongoose models
+│   ├── User.js     # User model
+│   └── ...
 ├── routes/         # API routes
+│   └── auth.routes.js  # Authentication routes
+├── seeders/        # Database seeders
+│   └── seedUsers.js    # User seeder
 ├── .env.example    # Environment variables template
 ├── .gitignore      # Git ignore rules
 ├── package.json    # Dependencies and scripts
@@ -82,6 +126,8 @@ backend/
 - **Express.js** - Web framework
 - **MongoDB** - Database
 - **Mongoose** - MongoDB ODM
+- **jsonwebtoken** - JWT authentication
+- **bcryptjs** - Password hashing
 - **dotenv** - Environment variable management
 - **cors** - Cross-Origin Resource Sharing
 - **nodemon** - Development auto-reload
