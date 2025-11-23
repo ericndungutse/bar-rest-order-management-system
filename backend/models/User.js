@@ -3,15 +3,9 @@ import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    name: {
       type: String,
-      required: [true, 'Username is required'],
-      unique: true,
-      trim: true,
-    },
-    fullname: {
-      type: String,
-      required: [true, 'Full name is required'],
+      required: [true, 'Name is required'],
       trim: true,
     },
     email: {
@@ -27,11 +21,16 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters long'],
     },
-    role: {
-      type: String,
-      enum: ['admin', 'manager', 'staff'], // Note: 'staff' is used instead of 'waiter' as per requirements
-      default: 'staff',
-      required: [true, 'Role is required'],
+    roles: {
+      type: [String],
+      enum: ['admin', 'manager', 'waiter'],
+      default: ['waiter'],
+      validate: {
+        validator: function(roles) {
+          return roles && roles.length > 0;
+        },
+        message: 'At least one role is required',
+      },
     },
     phone: {
       type: String,
@@ -44,7 +43,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index for role-based queries
-userSchema.index({ role: 1 });
+userSchema.index({ roles: 1 });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

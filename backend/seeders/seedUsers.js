@@ -7,27 +7,24 @@ dotenv.config();
 
 const users = [
   {
-    username: 'admin',
-    fullname: 'Admin User',
+    name: 'Admin User',
     email: 'admin@yopmain.com',
     password: 'Test@123',
-    role: 'admin',
+    roles: ['admin'],
     phone: '1234567890',
   },
   {
-    username: 'manager',
-    fullname: 'Manager User',
+    name: 'Manager User',
     email: 'manager@yopmain.com',
     password: 'Test@123',
-    role: 'manager',
+    roles: ['manager'],
     phone: '1234567891',
   },
   {
-    username: 'staff_member',
-    fullname: 'Staff Member',
-    email: 'staff@yopmain.com',
+    name: 'Waiter User',
+    email: 'waiter@yopmain.com',
     password: 'Test@123',
-    role: 'staff',
+    roles: ['waiter'],
     phone: '1234567892',
   },
 ];
@@ -49,7 +46,7 @@ const seedUsers = async () => {
 
     console.log('\nSeeded users:');
     users.forEach((user) => {
-      console.log(`- ${user.role}: ${user.username} (${user.email}) - Password: Test@123`);
+      console.log(`- ${user.roles.join(', ')}: ${user.name} (${user.email}) - Password: Test@123`);
     });
 
     process.exit(0);

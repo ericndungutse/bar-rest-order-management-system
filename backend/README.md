@@ -47,9 +47,9 @@ npm run seed
 ```
 
 This will create three test users:
-- **admin** (admin@yopmain.com) - Password: Test@123
-- **manager** (manager@yopmain.com) - Password: Test@123
-- **staff_member** (staff@yopmain.com) - Password: Test@123
+- **Admin User** (admin@yopmain.com) - Password: Test@123
+- **Manager User** (manager@yopmain.com) - Password: Test@123
+- **Waiter User** (waiter@yopmain.com) - Password: Test@123
 
 The server will start on `http://localhost:5000` (or the port specified in your .env file).
 
@@ -60,13 +60,13 @@ The server will start on `http://localhost:5000` (or the port specified in your 
 - `GET /health` - Health check endpoint (shows server and database status)
 
 ### Authentication
-- `POST /api/v1/auth/login` - Login with username and password
+- `POST /api/v1/auth/login` - Login with email and password
 
 #### Login Example
 ```bash
 curl -X POST http://localhost:5000/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username": "staff_member", "password": "Test@123"}'
+  -d '{"email": "waiter@yopmain.com", "password": "Test@123"}'
 ```
 
 **Response:**
@@ -78,10 +78,9 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "user": {
       "user_id": "716cdea8-f82b-4205-b7f3-d05ad2b88679",
-      "username": "staff_member",
-      "fullname": "Staff Member",
-      "email": "staff@yopmain.com",
-      "role": "staff"
+      "name": "Waiter User",
+      "email": "waiter@yopmain.com",
+      "roles": ["waiter"]
     }
   }
 }

@@ -18,18 +18,18 @@ const generateToken = (userId) => {
 // @access  Public
 export const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     // Validate input
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({
         status: 'error',
-        message: 'Please provide username and password',
+        message: 'Please provide email and password',
       });
     }
 
-    // Find user by username
-    const user = await User.findOne({ username });
+    // Find user by email
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(401).json({
@@ -59,10 +59,9 @@ export const login = async (req, res) => {
         access_token: token,
         user: {
           user_id: user._id,
-          username: user.username,
-          fullname: user.fullname,
+          name: user.name,
           email: user.email,
-          role: user.role,
+          roles: user.roles,
         },
       },
     });
