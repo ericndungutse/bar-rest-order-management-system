@@ -2,6 +2,8 @@
 
 This file collects feature ideas and design notes for future consideration in the bar-rest-order-management-system project. Use it as a reference when planning product enhancements, writing issues, or scoping implementation work.
 
+-Item not available, alert the manager to restock.
+
 ## Key Ideas
 
 - Waiter / Staff Management

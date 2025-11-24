@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Item from './Item.js';
 
 // Embedded document schema for client information
 const clientSchema = new mongoose.Schema(
@@ -60,7 +61,7 @@ const orderSchema = new mongoose.Schema(
     items: {
       type: [orderItemSchema],
       validate: {
-        validator: function(items) {
+        validator: function (items) {
           return items && items.length > 0;
         },
         message: 'At least one item is required in the order',
@@ -119,6 +120,101 @@ orderSchema.index({ status: 1, date: -1 });
 
 // Compound index for waiter's orders by status
 orderSchema.index({ waiterId: 1, status: 1 });
+
+// Model will be created after middleware is attached so pre-save runs as expected
+
+// Pre-validate middleware: ensure each ordered item exists, is available and has enough quantity
+// Pre-save middleware: ensure each ordered item exists, is available and has enough quantity
+orderSchema.pre('save', async function (next) {
+  // only run on create/update when items are present
+  if (!this.items || this.items.length === 0) return next();
+
+  try {
+    for (let idx = 0; idx < this.items.length; idx++) {
+      const orderItem = this.items[idx];
+      const itemDoc = await Item.findById(orderItem.itemId).select('available quantity_available name');
+
+      // build a short identifier for errors
+      const itemName = itemDoc?.name || null;
+      const itemIdent = itemName ? `${itemName} (${orderItem.itemId})` : `${orderItem.itemId}`;
+
+      if (!itemDoc) {
+        const err = new mongoose.Error.ValidationError(this);
+        err.addError(
+          `items.${idx}`,
+          new mongoose.Error.ValidatorError({
+            message: `Item not found: ${orderItem.itemId}`,
+            reason: 'not_found',
+            item: orderItem.itemId,
+            index: idx,
+          })
+        );
+        throw err;
+      }
+
+      if (!itemDoc.available) {
+        const err = new mongoose.Error.ValidationError(this);
+        err.addError(
+          `items.${idx}`,
+          new mongoose.Error.ValidatorError({
+            message: `Item unavailable: ${itemIdent}. Reason: marked unavailable`,
+            reason: 'unavailable',
+            item: itemDoc._id,
+            itemName,
+            index: idx,
+          })
+        );
+        throw err;
+      }
+
+      if (itemDoc.quantity_available < orderItem.quantity) {
+        const err = new mongoose.Error.ValidationError(this);
+        err.addError(
+          `items.${idx}`,
+          new mongoose.Error.ValidatorError({
+            message: `Insufficient stock for ${itemIdent}. Requested ${orderItem.quantity}, available ${itemDoc.quantity_available}. Reason: insufficient_quantity`,
+            reason: 'insufficient_quantity',
+            item: itemDoc._id,
+            itemName,
+            requested: orderItem.quantity,
+            available: itemDoc.quantity_available,
+            index: idx,
+          })
+        );
+        throw err;
+      }
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Post-save middleware: decrement stock for each ordered item. This uses atomic updates
+// to reduce race conditions but is not a full transaction. If an update fails due to
+// a concurrent change, we log a warning — the order has already been saved.
+orderSchema.post('save', async function (doc, next) {
+  try {
+    for (const orderItem of doc.items) {
+      const updated = await Item.findOneAndUpdate(
+        { _id: orderItem.itemId, quantity_available: { $gte: orderItem.quantity } },
+        { $inc: { quantity_available: -orderItem.quantity } },
+        { new: true }
+      );
+
+      if (!updated) {
+        // This indicates a race condition where stock was consumed after validation
+        console.warn(`Failed to decrement stock for item ${orderItem.itemId} — possible concurrent order.`);
+      }
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error decrementing item stock after order save:', error);
+    next();
+  }
+});
 
 const Order = mongoose.model('Order', orderSchema);
 

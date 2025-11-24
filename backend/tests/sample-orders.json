@@ -1,0 +1,51 @@
+[
+  {
+    "_id": "64b1f3a2c8f1a6b0d4e9f20a",
+    "client": {
+      "name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "phone": "+15551234567"
+    },
+    "items": [
+      {
+        "itemId": "64b1f3a2c8f1a6b0d4e9f11a",
+        "name": "Classic Margarita",
+        "price": 8.5,
+        "quantity": 2
+      }
+    ],
+    "waiterId": "64b1f3a2c8f1a6b0d4e9f12b",
+    "status": "pending",
+    "paymentStatus": "unpaid",
+    "notes": "No ice in the margaritas",
+    "date": "2025-11-24T00:00:00.000Z"
+  },
+  {
+    "_id": "64b1f3a2c8f1a6b0d4e9f20b",
+    "client": {
+      "name": "John Smith",
+      "email": "john.smith@example.com",
+      "phone": "+15557654321"
+    },
+    "items": [
+      {
+        "itemId": "64b1f3a2c8f1a6b0d4e9f11a",
+        "name": "Classic Margarita",
+        "price": 8.5,
+        "quantity": 2
+      },
+      {
+        "itemId": "64b1f3a2c8f1a6b0d4e9f11b",
+        "name": "Buffalo Wings",
+        "price": 12.0,
+        "quantity": 1
+      }
+    ],
+    "waiterId": "64b1f3a2c8f1a6b0d4e9f12b",
+    "sellerId": "64b1f3a2c8f1a6b0d4e9f13c",
+    "status": "pending",
+    "paymentStatus": "unpaid",
+    "notes": "Allergy: no peanuts. Serve drinks first.",
+    "date": "2025-11-24T00:00:00.000Z"
+  }
+]
