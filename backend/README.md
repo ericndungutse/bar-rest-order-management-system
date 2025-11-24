@@ -51,6 +51,20 @@ This will create three test users:
 - **Manager User** (manager@yopmain.com) - Password: Test@123
 - **Waiter User** (waiter@yopmain.com) - Password: Test@123
 
+### Seed the database with items:
+```bash
+npm run seed:items
+```
+
+This will create items for the admin user (ID: 6923914c954a9bdea72eafea):
+- **Soft Drinks:**
+  - Fanta Orange small (20 pieces @ 600 RWF each)
+  - Coca Cola small (20 pieces @ 600 RWF each)
+- **Beer:**
+  - Mutzing small (20 pieces @ 800 RWF each)
+  - Primus Nini (20 pieces @ 800 RWF each)
+  - Heineken (20 pieces @ 1000 RWF each)
+
 The server will start on `http://localhost:5000` (or the port specified in your .env file).
 
 ## API Endpoints
@@ -106,7 +120,8 @@ backend/
 ├── routes/         # API routes
 │   └── auth.routes.js  # Authentication routes
 ├── seeders/        # Database seeders
-│   └── seedUsers.js    # User seeder
+│   ├── seedUsers.js    # User seeder
+│   └── seedItems.js    # Item seeder
 ├── .env.example    # Environment variables template
 ├── .gitignore      # Git ignore rules
 ├── package.json    # Dependencies and scripts
