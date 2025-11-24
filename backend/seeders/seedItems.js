@@ -1,14 +1,12 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Item from '../models/Item.js';
+import User from '../models/User.js';
 import connectDB from '../config/db.js';
 
 dotenv.config();
 
-// Admin user ID as specified in the issue
-const ADMIN_USER_ID = '6923914c954a9bdea72eafea';
-
-const items = [
+const createItems = (adminId) => [
   // Soft Drinks
   {
     name: 'Fanta Orange small',
@@ -16,7 +14,7 @@ const items = [
     price: 600,
     quantity_available: 20,
     category: 'Drink',
-    owner: new mongoose.Types.ObjectId(ADMIN_USER_ID),
+    owner: adminId,
     available: true,
   },
   {
@@ -25,7 +23,7 @@ const items = [
     price: 600,
     quantity_available: 20,
     category: 'Drink',
-    owner: new mongoose.Types.ObjectId(ADMIN_USER_ID),
+    owner: adminId,
     available: true,
   },
   // Beer
@@ -35,7 +33,7 @@ const items = [
     price: 800,
     quantity_available: 20,
     category: 'Drink',
-    owner: new mongoose.Types.ObjectId(ADMIN_USER_ID),
+    owner: adminId,
     available: true,
   },
   {
@@ -44,7 +42,7 @@ const items = [
     price: 800,
     quantity_available: 20,
     category: 'Drink',
-    owner: new mongoose.Types.ObjectId(ADMIN_USER_ID),
+    owner: adminId,
     available: true,
   },
   {
@@ -53,7 +51,7 @@ const items = [
     price: 1000,
     quantity_available: 20,
     category: 'Drink',
-    owner: new mongoose.Types.ObjectId(ADMIN_USER_ID),
+    owner: adminId,
     available: true,
   },
 ];
@@ -62,18 +60,27 @@ const seedItems = async () => {
   try {
     await connectDB();
 
-    // Convert ADMIN_USER_ID to ObjectId for proper comparison
-    const adminObjectId = new mongoose.Types.ObjectId(ADMIN_USER_ID);
+    // Find the admin user
+    const adminUser = await User.findOne({ roles: 'admin' });
+    if (!adminUser) {
+      console.error('Admin user not found. Please run "npm run seed" first to create users.');
+      process.exit(1);
+    }
+
+    console.log(`Found admin user: ${adminUser.name} (${adminUser._id})`);
+
+    // Create items with admin's ID
+    const items = createItems(adminUser._id);
 
     // Clear existing items for this admin user
-    await Item.deleteMany({ owner: adminObjectId });
+    await Item.deleteMany({ owner: adminUser._id });
     console.log('Cleared existing items for admin user');
 
     // Insert seed items
     const createdItems = await Item.insertMany(items);
     console.log('Items seeded successfully');
 
-    console.log(`\nSeeded items for admin user (ID: ${ADMIN_USER_ID}):`);
+    console.log(`\nSeeded items for admin user (ID: ${adminUser._id}):`);
     console.log('============================================================');
     
     // Separate items by type based on their names
