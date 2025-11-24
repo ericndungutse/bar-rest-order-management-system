@@ -36,6 +36,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    boss: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+      validate: {
+        validator: function(bossId) {
+          // Boss can only be set if user is manager or waiter
+          if (bossId && !this.roles.includes('manager') && !this.roles.includes('waiter')) {
+            return false;
+          }
+          return true;
+        },
+        message: 'Only managers and waiters can have a boss',
+      },
+    },
   },
   {
     timestamps: true,
@@ -44,6 +59,9 @@ const userSchema = new mongoose.Schema(
 
 // Index for role-based queries
 userSchema.index({ roles: 1 });
+
+// Index for boss relationship queries
+userSchema.index({ boss: 1 });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
