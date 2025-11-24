@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       enum: ['admin', 'manager', 'waiter'],
       default: ['waiter'],
       validate: {
-        validator: function(roles) {
+        validator: function (roles) {
           return roles && roles.length > 0;
         },
         message: 'At least one role is required',
@@ -41,12 +41,9 @@ const userSchema = new mongoose.Schema(
       ref: 'User',
       default: null,
       validate: {
-        validator: function(bossId) {
+        validator: function (bossId) {
           // Boss can only be set if user is manager or waiter
-          if (bossId && !this.roles.includes('manager') && !this.roles.includes('waiter')) {
-            return false;
-          }
-          return true;
+          return !bossId || this.roles.includes('manager') || this.roles.includes('waiter');
         },
         message: 'Only managers and waiters can have a boss',
       },
@@ -68,7 +65,7 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
-  
+
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
