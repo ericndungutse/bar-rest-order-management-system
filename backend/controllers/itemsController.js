@@ -14,7 +14,7 @@ export const getAllItems = async (req, res) => {
       items = await Item.find({ owner: user._id })
         .populate('owner', 'name email roles')
         .sort({ createdAt: -1 });
-    } else if (user.roles.includes('manager') || user.roles.includes('waiter')) {
+    } else {
       // Manager and waiter see items from their boss (admin)
       if (!user.boss) {
         return res.status(400).json({
@@ -36,11 +36,6 @@ export const getAllItems = async (req, res) => {
       items = await Item.find({ owner: user.boss })
         .populate('owner', 'name email roles')
         .sort({ createdAt: -1 });
-    } else {
-      return res.status(403).json({
-        status: 'error',
-        message: 'Not authorized to access items',
-      });
     }
 
     res.status(200).json({
