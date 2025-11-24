@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 // Connect to MongoDB
-connectDB().catch(err => {
+connectDB().catch((err) => {
   console.warn('MongoDB connection failed, server will continue without database:', err.message);
 });
 
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to Bar & Restaurant Order Management System API',
     version: '1.0.0',
-    status: 'running'
+    status: 'running',
   });
 });
 
@@ -38,10 +38,10 @@ app.get('/health', (req, res) => {
     uptime: process.uptime(),
     database: {
       status: dbStatus,
-      name: mongoose.connection.name || 'not connected'
-    }
+      name: mongoose.connection.name || 'not connected',
+    },
   };
-  
+
   const statusCode = dbStatus === 'connected' ? 200 : 503;
   res.status(statusCode).json(health);
 });
@@ -49,16 +49,13 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemsRoutes);
-// app.use('/api/orders', orderRoutes);
-// app.use('/api/menu', menuRoutes);
-// app.use('/api/tables', tableRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : {}
+    error: process.env.NODE_ENV === 'development' ? err.message : {},
   });
 });
 

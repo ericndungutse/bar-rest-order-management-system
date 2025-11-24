@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import User from '../models/User.js';
 import connectDB from '../config/db.js';
+import User from '../models/User.js';
 
 dotenv.config();
 
@@ -52,9 +51,11 @@ const seedUsers = async () => {
 
     console.log('\nSeeded users (Development only - Do not use in production):');
     console.log(`- Admin: ${users[0].name} (${users[0].email}) - Password: Test@123 - ID: ${adminUser._id}`);
-    users.slice(1).forEach((user) => {
-      console.log(`- ${user.roles.join(', ')}: ${user.name} (${user.email}) - Password: Test@123 - Boss: ${adminUser._id}`);
-    });
+    for (const user of users.slice(1)) {
+      console.log(
+        `- ${user.roles.join(', ')}: ${user.name} (${user.email}) - Password: Test@123 - Boss: ${adminUser._id}`
+      );
+    }
 
     process.exit(0);
   } catch (error) {

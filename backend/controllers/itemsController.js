@@ -11,9 +11,7 @@ export const getAllItems = async (req, res) => {
 
     if (user.roles.includes('admin')) {
       // Admin sees only their own items
-      items = await Item.find({ owner: user._id })
-        .populate('owner', 'name email roles')
-        .sort({ createdAt: -1 });
+      items = await Item.find({ owner: user._id }).populate('owner', 'name email roles').sort({ createdAt: -1 });
     } else {
       // Manager and waiter see items from their boss (admin)
       if (!user.boss) {
@@ -33,15 +31,15 @@ export const getAllItems = async (req, res) => {
       }
 
       // Get items owned by the boss
-      items = await Item.find({ owner: user.boss })
-        .populate('owner', 'name email roles')
-        .sort({ createdAt: -1 });
+      items = await Item.find({ owner: user.boss }).populate('owner', 'name email roles').sort({ createdAt: -1 });
     }
 
     res.status(200).json({
       status: 'success',
-      count: items.length,
-      data: items,
+      data: {
+        count: items.length,
+        items,
+      },
     });
   } catch (error) {
     console.error('Get all items error:', error);

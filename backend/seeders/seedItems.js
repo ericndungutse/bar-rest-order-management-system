@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import connectDB from '../config/db.js';
 import Item from '../models/Item.js';
 import User from '../models/User.js';
-import connectDB from '../config/db.js';
 
 dotenv.config();
 
@@ -82,23 +81,21 @@ const seedItems = async () => {
 
     console.log(`\nSeeded items for admin user (ID: ${adminUser._id}):`);
     console.log('============================================================');
-    
+
     // Separate items by type based on their names
-    const softDrinks = createdItems.filter(item => 
-      item.name.includes('Fanta') || item.name.includes('Coca Cola')
+    const softDrinks = createdItems.filter((item) => item.name.includes('Fanta') || item.name.includes('Coca Cola'));
+    const beers = createdItems.filter(
+      (item) => item.name.includes('Mutzing') || item.name.includes('Primus') || item.name.includes('Heineken')
     );
-    const beers = createdItems.filter(item => 
-      item.name.includes('Mutzing') || item.name.includes('Primus') || item.name.includes('Heineken')
-    );
-    
+
     console.log('\nSoft Drinks:');
-    softDrinks.forEach((item) => {
+    for (const item of softDrinks) {
       console.log(`- ${item.name}: ${item.quantity_available} pieces @ ${item.price} RWF each`);
-    });
+    }
     console.log('\nBeer:');
-    beers.forEach((item) => {
+    for (const item of beers) {
       console.log(`- ${item.name}: ${item.quantity_available} pieces @ ${item.price} RWF each`);
-    });
+    }
     console.log('\n============================================================');
     console.log(`Total items seeded: ${createdItems.length}`);
 
