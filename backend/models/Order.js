@@ -130,10 +130,12 @@ orderSchema.pre('save', async function (next) {
   // only run on create/update when items are present
   if (!this.items || this.items.length === 0) return next();
 
+  const sellerId = this.sellerId;
+
   try {
     for (let idx = 0; idx < this.items.length; idx++) {
       const orderItem = this.items[idx];
-      const itemDoc = await Item.findById(orderItem.itemId).select('available quantity_available name');
+      const itemDoc = await Item.findOne({ _id: orderItem.itemId, owner: sellerId });
 
       // build a short identifier for errors
       const itemName = itemDoc?.name || null;

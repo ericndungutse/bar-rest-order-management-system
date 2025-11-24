@@ -60,7 +60,7 @@ const seedItems = async () => {
     await connectDB();
 
     // Find the admin user
-    const adminUser = await User.findOne({ roles: 'admin' });
+    const adminUser = await User.findById('6923a744b75a2f0cf2bf69a6');
     if (!adminUser) {
       console.error('Admin user not found. Please run "npm run seed" first to create users.');
       process.exit(1);

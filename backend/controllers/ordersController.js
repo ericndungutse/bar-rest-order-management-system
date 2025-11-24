@@ -44,4 +44,50 @@ export const addOrder = async (req, res) => {
   }
 };
 
-export default { addOrder };
+export const getAllOrders = async (req, res) => {
+  try {
+    const user = req.user;
+    const query = {};
+
+    if (user.roles.includes('admin')) {
+      // Admin: orders for their own establishment
+      query.sellerId = user._id;
+    } else if (user.roles.includes('manager') || user.roles.includes('waiter')) {
+      if (!user.boss) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'No boss assigned. Please contact administrator.',
+        });
+      }
+
+      query.sellerId = user.boss;
+
+      if (user.roles.includes('waiter')) {
+        // Waiter: only their own orders
+        query.waiterId = user._id;
+      }
+    } else {
+      return res.status(403).json({
+        status: 'error',
+        message: 'You do not have permission to view orders',
+      });
+    }
+
+    // Execute query once
+    const orders = await Order.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        count: orders.length,
+        orders,
+      },
+    });
+  } catch (error) {
+    console.error('Get all orders error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Server error while fetching orders',
+    });
+  }
+};

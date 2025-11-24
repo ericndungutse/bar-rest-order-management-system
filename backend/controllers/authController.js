@@ -6,11 +6,7 @@ const generateToken = (userId) => {
   if (!process.env.JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in environment variables');
   }
-  return jwt.sign(
-    { user_id: userId },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+  return jwt.sign({ user_id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
 // @desc    Login user
@@ -60,6 +56,7 @@ export const login = async (req, res) => {
         user: {
           user_id: user._id,
           name: user.name,
+          boss: user.boss || null,
           email: user.email,
           roles: user.roles,
         },
