@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
+import { customAlphabet } from 'nanoid';
 import Item from './Item.js';
+
+const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
 
 // Embedded document schema for client information
 const clientSchema = new mongoose.Schema(
@@ -81,6 +84,11 @@ const orderSchema = new mongoose.Schema(
       enum: ['pending', 'preparing', 'served', 'cancelled'],
       default: 'pending',
     },
+    orderId: {
+      type: String,
+      unique: true,
+      index: true,
+    },
     paymentStatus: {
       type: String,
       enum: ['unpaid', 'paid', 'refunded'],
@@ -106,22 +114,15 @@ orderSchema.index({ waiterId: 1 });
 // Index for faster lookups by sellerId
 orderSchema.index({ sellerId: 1 });
 
-// Index for status filtering
-orderSchema.index({ status: 1 });
-
-// Index for payment status filtering
-orderSchema.index({ paymentStatus: 1 });
-
-// Index for date-based queries
-orderSchema.index({ date: -1 });
-
-// Compound index for filtering orders by status and date
-orderSchema.index({ status: 1, date: -1 });
-
-// Compound index for waiter's orders by status
-orderSchema.index({ waiterId: 1, status: 1 });
-
 // Model will be created after middleware is attached so pre-save runs as expected
+
+// Generate orderId before save
+orderSchema.pre('save', function (next) {
+  if (this.isNew && !this.orderId) {
+    this.orderId = nanoid(); // <- call the function!
+  }
+  next();
+});
 
 // Pre-validate middleware: ensure each ordered item exists, is available and has enough quantity
 // Pre-save middleware: ensure each ordered item exists, is available and has enough quantity
