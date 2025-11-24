@@ -6,10 +6,7 @@ export const protect = async (req, res, next) => {
   let token;
 
   // Check for token in Authorization header
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
+  if (req?.headers?.authorization?.startsWith('Bearer')) {
     try {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
@@ -56,7 +53,7 @@ export const authorize = (...roles) => {
     }
 
     // Check if user has at least one of the required roles
-    const hasRole = roles.some(role => req.user.roles.includes(role));
+    const hasRole = roles.some((role) => req.user.roles.includes(role));
 
     if (!hasRole) {
       return res.status(403).json({

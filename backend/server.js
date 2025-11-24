@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import itemsRoutes from './routes/items.routes.js';
+import ordersRoutes from './routes/orders.routes.js';
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemsRoutes);
+app.use('/api/v1/orders', ordersRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
