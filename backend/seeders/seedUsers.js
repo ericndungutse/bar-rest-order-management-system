@@ -37,16 +37,23 @@ const seedUsers = async () => {
     await User.deleteMany();
     console.log('Cleared existing users');
 
-    // Insert seed users one by one to trigger pre-save middleware
-    for (const userData of users) {
+    // Insert admin user first
+    const adminUser = new User(users[0]);
+    await adminUser.save();
+    console.log('Admin user created');
+
+    // Insert manager and waiter with boss reference to admin
+    for (let i = 1; i < users.length; i++) {
+      const userData = { ...users[i], boss: adminUser._id };
       const user = new User(userData);
       await user.save();
     }
-    console.log('Users seeded successfully');
+    console.log('Manager and waiter users created with boss reference');
 
     console.log('\nSeeded users (Development only - Do not use in production):');
-    users.forEach((user) => {
-      console.log(`- ${user.roles.join(', ')}: ${user.name} (${user.email}) - Password: Test@123`);
+    console.log(`- Admin: ${users[0].name} (${users[0].email}) - Password: Test@123 - ID: ${adminUser._id}`);
+    users.slice(1).forEach((user) => {
+      console.log(`- ${user.roles.join(', ')}: ${user.name} (${user.email}) - Password: Test@123 - Boss: ${adminUser._id}`);
     });
 
     process.exit(0);
