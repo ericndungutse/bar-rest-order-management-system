@@ -107,10 +107,22 @@ function Login() {
           }),
         });
 
-        const data = await response.json();
+        let data;
+        try {
+          data = await response.json();
+        } catch {
+          setApiError('Invalid server response. Please try again later.');
+          return;
+        }
 
         if (!response.ok) {
           setApiError(data.message || 'Login failed. Please try again.');
+          return;
+        }
+
+        // Validate response structure before storing
+        if (!data.data?.access_token || !data.data?.user) {
+          setApiError('Invalid server response. Please try again later.');
           return;
         }
 
