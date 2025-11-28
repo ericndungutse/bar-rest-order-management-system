@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { useLogin, useUser } from '../hooks/useAuth';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -18,9 +17,8 @@ function Login() {
     password: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
-  const [loginSuccess, setLoginSuccess] = useState(false);
+  const { data: userData } = useUser();
+  const loginMutation = useLogin();
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,7 +70,7 @@ function Login() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validate all fields
@@ -91,54 +89,30 @@ function Login() {
 
     // Check if form is valid
     if (!emailError && !passwordError) {
-      setIsLoading(true);
-      setApiError('');
-      setLoginSuccess(false);
-
-      try {
-        const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        });
-
-        let data;
-        try {
-          data = await response.json();
-        } catch {
-          setApiError('Invalid server response. Please try again later.');
-          return;
-        }
-
-        if (!response.ok) {
-          setApiError(data.message || 'Login failed. Please try again.');
-          return;
-        }
-
-        // Validate response structure before storing
-        if (!data.data?.access_token || !data.data?.user) {
-          setApiError('Invalid server response. Please try again later.');
-          return;
-        }
-
-        // Store the token and user data
-        localStorage.setItem('access_token', data.data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.data.user));
-        setLoginSuccess(true);
-      } catch {
-        setApiError('Unable to connect to server. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
+      loginMutation.mutate({
+        email: formData.email,
+        password: formData.password,
+      });
     }
   };
 
+  // Get error message from mutation error
+  const getApiError = () => {
+    if (!loginMutation.error) return '';
+    const error = loginMutation.error;
+    if (error.response?.data?.message) {
+      return error.response.data.message;
+    }
+    if (error.message === 'Network Error') {
+      return 'Unable to connect to server. Please try again later.';
+    }
+    return 'Login failed. Please try again.';
+  };
+
   const isFormValid = !errors.email && !errors.password && formData.email && formData.password;
+  const isLoading = loginMutation.isPending;
+  const apiError = getApiError();
+  const loginSuccess = loginMutation.isSuccess && userData?.user;
 
   return (
     <div className="flex justify-center items-center min-h-screen w-full p-4 bg-gray-900">
@@ -155,7 +129,7 @@ function Login() {
           )}
           {loginSuccess && (
             <div className="bg-green-500/10 border border-green-500 text-green-500 px-4 py-3 rounded-lg text-sm" role="alert">
-              Login successful!
+              Login successful! Welcome, {userData.user.name}!
             </div>
           )}
           <div className="flex flex-col gap-2">
