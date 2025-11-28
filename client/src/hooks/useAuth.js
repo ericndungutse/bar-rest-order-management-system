@@ -22,7 +22,7 @@ export const useUser = () => {
     queryKey: USER_QUERY_KEY,
     queryFn: () => getStoredUser(),
     staleTime: Infinity,
-    initialData: getStoredUser,
+    initialData: () => getStoredUser(),
   });
 };
 
