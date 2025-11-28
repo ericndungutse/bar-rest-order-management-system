@@ -3,26 +3,12 @@ import { loginUser } from '../api/auth';
 
 const USER_QUERY_KEY = ['user'];
 
-// Helper function to get initial user from localStorage
-const getStoredUser = () => {
-  const storedUser = localStorage.getItem('user');
-  const storedToken = localStorage.getItem('access_token');
-  if (storedUser && storedToken) {
-    return {
-      user: JSON.parse(storedUser),
-      access_token: storedToken,
-    };
-  }
-  return null;
-};
-
 // Hook to get current user state
 export const useUser = () => {
   return useQuery({
     queryKey: USER_QUERY_KEY,
-    queryFn: () => getStoredUser(),
+    queryFn: () => null,
     staleTime: Infinity,
-    initialData: () => getStoredUser(),
   });
 };
 
@@ -35,9 +21,8 @@ export const useLogin = () => {
     onSuccess: (data) => {
       // Validate response structure
       if (data.data?.access_token && data.data?.user) {
-        // Store in localStorage
+        // Store only token in localStorage
         localStorage.setItem('access_token', data.data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.data.user));
 
         // Update query cache with user data
         queryClient.setQueryData(USER_QUERY_KEY, {
@@ -55,7 +40,6 @@ export const useLogout = () => {
 
   return () => {
     localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
     queryClient.setQueryData(USER_QUERY_KEY, null);
   };
 };
