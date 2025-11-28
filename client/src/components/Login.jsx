@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import './Login.css';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -94,15 +93,17 @@ function Login() {
   const isFormValid = !errors.email && !errors.password && formData.email && formData.password;
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <h1>Welcome Back</h1>
-          <p>Sign in to your account</p>
+    <div className="flex justify-center items-center min-h-screen w-full p-4 bg-gray-900">
+      <div className="bg-gray-800 rounded-xl p-10 w-full max-w-md shadow-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
+          <p className="text-gray-400 text-sm">Sign in to your account</p>
         </div>
-        <form className="login-form" onSubmit={handleSubmit} noValidate>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className="text-sm font-medium text-gray-300">
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -111,18 +112,24 @@ function Login() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Enter your email"
-              className={touched.email && errors.email ? 'input-error' : ''}
+              className={`px-4 py-3 border rounded-lg text-base bg-gray-900 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 ${
+                touched.email && errors.email
+                  ? 'border-red-500 focus:ring-red-500/30'
+                  : 'border-gray-600 focus:border-indigo-500 focus:ring-indigo-500/30'
+              }`}
               aria-invalid={touched.email && errors.email ? 'true' : 'false'}
               aria-describedby={errors.email ? 'email-error' : undefined}
             />
             {touched.email && errors.email && (
-              <span id="email-error" className="error-message" role="alert">
+              <span id="email-error" className="text-red-500 text-sm mt-1" role="alert">
                 {errors.email}
               </span>
             )}
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="password" className="text-sm font-medium text-gray-300">
+              Password
+            </label>
             <input
               type="password"
               id="password"
@@ -131,17 +138,29 @@ function Login() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Enter your password"
-              className={touched.password && errors.password ? 'input-error' : ''}
+              className={`px-4 py-3 border rounded-lg text-base bg-gray-900 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 ${
+                touched.password && errors.password
+                  ? 'border-red-500 focus:ring-red-500/30'
+                  : 'border-gray-600 focus:border-indigo-500 focus:ring-indigo-500/30'
+              }`}
               aria-invalid={touched.password && errors.password ? 'true' : 'false'}
               aria-describedby={errors.password ? 'password-error' : undefined}
             />
             {touched.password && errors.password && (
-              <span id="password-error" className="error-message" role="alert">
+              <span id="password-error" className="text-red-500 text-sm mt-1" role="alert">
                 {errors.password}
               </span>
             )}
           </div>
-          <button type="submit" className="login-button" disabled={!isFormValid}>
+          <button
+            type="submit"
+            className={`mt-2 py-3 rounded-lg text-base font-semibold text-white transition-all duration-200 ${
+              isFormValid
+                ? 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] cursor-pointer'
+                : 'bg-gray-600 cursor-not-allowed opacity-70'
+            }`}
+            disabled={!isFormValid}
+          >
             Sign In
           </button>
         </form>
