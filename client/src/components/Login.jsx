@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLogin, useUser } from '../hooks/useAuth';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,9 @@ function Login() {
     email: false,
     password: false,
   });
+
+  const { data: userData } = useUser();
+  const loginMutation = useLogin();
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -85,12 +89,30 @@ function Login() {
 
     // Check if form is valid
     if (!emailError && !passwordError) {
-      // Form is valid - no implementation as per requirements
-      console.log('Form submitted:', formData);
+      loginMutation.mutate({
+        email: formData.email,
+        password: formData.password,
+      });
     }
   };
 
+  // Get error message from mutation error
+  const getApiError = () => {
+    if (!loginMutation.error) return '';
+    const error = loginMutation.error;
+    if (error.response?.data?.message) {
+      return error.response.data.message;
+    }
+    if (error.message === 'Network Error') {
+      return 'Unable to connect to server. Please try again later.';
+    }
+    return 'Login failed. Please try again.';
+  };
+
   const isFormValid = !errors.email && !errors.password && formData.email && formData.password;
+  const isLoading = loginMutation.isPending;
+  const apiError = getApiError();
+  const loginSuccess = loginMutation.isSuccess && userData?.user;
 
   return (
     <div className="flex justify-center items-center min-h-screen w-full p-4 bg-gray-900">
@@ -100,6 +122,16 @@ function Login() {
           <p className="text-gray-400 text-sm">Sign in to your account</p>
         </div>
         <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+          {apiError && (
+            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm" role="alert">
+              {apiError}
+            </div>
+          )}
+          {loginSuccess && (
+            <div className="bg-green-500/10 border border-green-500 text-green-500 px-4 py-3 rounded-lg text-sm" role="alert">
+              Login successful! Welcome, {userData.user.name}!
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="text-sm font-medium text-gray-300">
               Email
@@ -112,11 +144,12 @@ function Login() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Enter your email"
+              disabled={isLoading}
               className={`px-4 py-3 border rounded-lg text-base bg-gray-900 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 ${
                 touched.email && errors.email
                   ? 'border-red-500 focus:ring-red-500/30'
                   : 'border-gray-600 focus:border-indigo-500 focus:ring-indigo-500/30'
-              }`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-invalid={touched.email && errors.email ? 'true' : 'false'}
               aria-describedby={errors.email ? 'email-error' : undefined}
             />
@@ -138,11 +171,12 @@ function Login() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Enter your password"
+              disabled={isLoading}
               className={`px-4 py-3 border rounded-lg text-base bg-gray-900 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 ${
                 touched.password && errors.password
                   ? 'border-red-500 focus:ring-red-500/30'
                   : 'border-gray-600 focus:border-indigo-500 focus:ring-indigo-500/30'
-              }`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-invalid={touched.password && errors.password ? 'true' : 'false'}
               aria-describedby={errors.password ? 'password-error' : undefined}
             />
@@ -155,13 +189,13 @@ function Login() {
           <button
             type="submit"
             className={`mt-2 py-3 rounded-lg text-base font-semibold text-white transition-all duration-200 ${
-              isFormValid
+              isFormValid && !isLoading
                 ? 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] cursor-pointer'
                 : 'bg-gray-600 cursor-not-allowed opacity-70'
             }`}
-            disabled={!isFormValid}
+            disabled={!isFormValid || isLoading}
           >
-            Sign In
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
       </div>
